@@ -47,7 +47,7 @@ public class Wget implements Runnable {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.print("\nFile is downloaded for "
+        System.out.print(System.lineSeparator() + "File is downloaded for "
                 + Math.round((System.nanoTime() - zeroTime) / 1000000000.0) + " seconds");
     }
 
