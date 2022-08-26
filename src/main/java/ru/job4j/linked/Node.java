@@ -17,7 +17,4 @@ public final class Node<T> {
         return value;
     }
 
-    public Node<T> makePrevious(T value) {
-        return new Node<>(next, value);
-    }
 }
