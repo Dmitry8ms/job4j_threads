@@ -30,11 +30,10 @@ public final class AccountStorage {
 
     public synchronized boolean transfer(int fromId, int toId, int amount) {
         boolean result = false;
-        Account from = getById(fromId).orElse(new Account(0, 0));
+        Optional<Account> from = getById(fromId);
         Optional<Account> to = getById(toId);
-        if (from.amount() - amount >= 0
-                && to.isPresent()) {
-            result = update(new Account(fromId, from.amount() - amount))
+        if (from.isPresent() && to.isPresent() && from.get().amount() - amount >= 0) {
+            result = update(new Account(fromId, from.get().amount() - amount))
                 && update(new Account(toId, to.get().amount() + amount));
         }
         return result;
