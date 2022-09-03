@@ -9,27 +9,22 @@ public class CountBarrier {
     private final int total;
 
     @GuardedBy("this")
-    private volatile int count = 0;
+    private int count = 0;
 
     public CountBarrier(final int total) {
         this.total = total;
     }
 
     public synchronized void count() {
+        count = 0;
         for (int i = 0; i <= total; i++) {
-            System.out.print("\r" + count++);
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+            count++;
         }
-        System.out.print(System.lineSeparator());
         notifyAll();
     }
 
     public synchronized void await() {
-        while (count <= total) {
+        while (count < total) {
             try {
                 wait();
             } catch (InterruptedException e) {
@@ -45,6 +40,12 @@ public class CountBarrier {
                     timeBarrier.count();
                 },
                 "Master");
+        Thread master2 = new Thread(
+                () -> {
+                    System.out.println(Thread.currentThread().getName() + " started");
+                    timeBarrier.count();
+                },
+                "Master 2");
         Thread slave = new Thread(
                 () -> {
                     timeBarrier.await();
@@ -58,6 +59,7 @@ public class CountBarrier {
                 },
                 "Slave 2");
         master.start();
+        master2.start();
         slave.start();
         slave2.start();
     }
