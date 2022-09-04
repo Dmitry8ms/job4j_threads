@@ -8,10 +8,6 @@ public class CountBarrier {
 
     private final int total;
 
-    public int getTotal() {
-        return total;
-    }
-
     @GuardedBy("this")
     private int count = 0;
 
@@ -38,7 +34,7 @@ public class CountBarrier {
         Thread master = new Thread(
                 () -> {
                     System.out.println(Thread.currentThread().getName() + " started");
-                    for (int i = 0; i <= timeBarrier.getTotal(); i++) {
+                    for (int i = 0; i <= 10; i++) {
                         timeBarrier.count();
                     }
 
