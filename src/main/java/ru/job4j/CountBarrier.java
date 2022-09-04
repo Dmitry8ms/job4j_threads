@@ -8,6 +8,10 @@ public class CountBarrier {
 
     private final int total;
 
+    public int getTotal() {
+        return total;
+    }
+
     @GuardedBy("this")
     private int count = 0;
 
@@ -16,10 +20,7 @@ public class CountBarrier {
     }
 
     public synchronized void count() {
-        count = 0;
-        for (int i = 0; i <= total; i++) {
-            count++;
-        }
+        count++;
         notifyAll();
     }
 
@@ -37,15 +38,12 @@ public class CountBarrier {
         Thread master = new Thread(
                 () -> {
                     System.out.println(Thread.currentThread().getName() + " started");
-                    timeBarrier.count();
+                    for (int i = 0; i <= timeBarrier.getTotal(); i++) {
+                        timeBarrier.count();
+                    }
+
                 },
                 "Master");
-        Thread master2 = new Thread(
-                () -> {
-                    System.out.println(Thread.currentThread().getName() + " started");
-                    timeBarrier.count();
-                },
-                "Master 2");
         Thread slave = new Thread(
                 () -> {
                     timeBarrier.await();
@@ -59,7 +57,6 @@ public class CountBarrier {
                 },
                 "Slave 2");
         master.start();
-        master2.start();
         slave.start();
         slave2.start();
     }
