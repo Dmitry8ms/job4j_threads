@@ -13,38 +13,51 @@ public class SimpleBlockingQueue<T> {
 
     @GuardedBy("this")
     private final Queue<T> queue = new LinkedList<>();
+    private final int limit;
 
-    public synchronized void offer(T value) {
+    public SimpleBlockingQueue(int size) {
+        this.limit = size;
+    }
+
+    public synchronized void offer(T value) throws InterruptedException {
+        if (queue.size() > limit - 1) {
+            wait();
+        }
         queue.offer(value);
         notifyAll();
     }
 
-    public synchronized T poll() {
+    public synchronized T poll() throws InterruptedException {
         while (queue.isEmpty()) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                System.out.println("poll() wait in "
-                        + Thread.currentThread().getName() + " was " + "interrupted");
-                Thread.currentThread().interrupt();
-            }
+            wait();
         }
-        return queue.poll();
+        T rsl = queue.poll();
+        notifyAll();
+        return rsl;
     }
 
 
     public static void main(String[] args) throws InterruptedException {
         List<Integer> container = new ArrayList<>();
-        SimpleBlockingQueue<Integer> bQueue = new SimpleBlockingQueue<>();
+        SimpleBlockingQueue<Integer> bQueue = new SimpleBlockingQueue<>(10);
         Thread provider = new Thread(() -> {
             for (int i = 0; i < 100; i++) {
-                bQueue.offer(i);
-                System.out.println(i + " was put");
+                try {
+                    bQueue.offer(i);
+                    System.out.println(i + " was put");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
         Thread consumer1 = new Thread(() -> {
             while (container.size() < 99) {
-                Integer e = bQueue.poll();
+                Integer e = null;
+                try {
+                    e = bQueue.poll();
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
                 System.out.println(e + " was got by " + Thread.currentThread().getName());
                 container.add(e);
                 System.out.println("elements collected in container: " + container.size());
