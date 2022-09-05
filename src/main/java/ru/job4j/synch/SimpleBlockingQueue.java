@@ -20,7 +20,7 @@ public class SimpleBlockingQueue<T> {
     }
 
     public synchronized void offer(T value) throws InterruptedException {
-        if (queue.size() > limit - 1) {
+        while (queue.size() > limit - 1) {
             wait();
         }
         queue.offer(value);
@@ -51,7 +51,7 @@ public class SimpleBlockingQueue<T> {
             }
         });
         Thread consumer1 = new Thread(() -> {
-            while (container.size() < 99) {
+            while (container.size() < 100) {
                 Integer e = null;
                 try {
                     e = bQueue.poll();
