@@ -72,6 +72,9 @@ public class SimpleBlockingQueue<T> {
         System.out.println("Consumer1 joined");
         System.out.println("bQueue is blocking queue: " + !container.contains(null));
         System.out.println(container);
+    }
 
+    public boolean isEmpty() {
+        return queue.isEmpty();
     }
 }
