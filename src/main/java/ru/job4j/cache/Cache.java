@@ -11,7 +11,7 @@ public class Cache {
     }
 
     public Base get(Integer key) {
-        return memory.getOrDefault(key, null);
+        return memory.get(key);
     }
 
     public boolean update(Base model) {
