@@ -20,22 +20,4 @@ public class CASCount {
         return count.get();
     }
 
-    public static void main(String[] args) throws InterruptedException {
-        CASCount cCount = new CASCount();
-        Thread counter1 = new Thread(() -> {
-            for (int i = 0; i < 50; i++) {
-                cCount.increment();
-            }
-        });
-        Thread counter2 = new Thread(() -> {
-            for (int i = 0; i < 50; i++) {
-                cCount.increment();
-            }
-        });
-        counter1.start();
-        counter2.start();
-        counter1.join();
-        counter2.join();
-        System.out.println("count is good: " + (cCount.get() == 100));
-    }
 }
