@@ -37,6 +37,32 @@ public class CacheTest {
         result.add(cache.get(1).getName());
         assertEquals(List.of("1", "1", "Stas"), result);
     }
+    @Test
+    public void whenSameVersionAndIdThenTrue() {
+        Cache cache = new Cache();
+        Base model1 = new Base(1, 0);
+        Base model2 = new Base(1, 0);
+        cache.add(model1);
+        assertTrue(cache.update(model2));
+    }
+
+    @Test
+    public void whenSameVersionAndDifIdThenFalse() {
+        Cache cache = new Cache();
+        Base model1 = new Base(1, 0);
+        Base model2 = new Base(2, 0);
+        cache.add(model1);
+        assertFalse(cache.update(model2));
+    }
+    @Test
+    (expected = OptimisticException.class)
+    public void whenDifVersionAndIdThenThrow() {
+        Cache cache = new Cache();
+        Base model1 = new Base(1, 0);
+        Base model2 = new Base(1, 1);
+        cache.add(model1);
+        cache.update(model2);
+    }
 
     @Test
     public void whenDeleteThenNoSuchElement() {
