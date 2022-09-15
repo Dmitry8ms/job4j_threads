@@ -1,6 +1,5 @@
 package ru.job4j.fjp;
 
-import java.util.Arrays;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 
@@ -8,42 +7,45 @@ public class FindObject<T> extends RecursiveTask<Integer> {
 
     private final T[] array;
     private final T object;
-    public FindObject(T[] array, T object) {
+    private final int from;
+    private final int to;
+
+    public FindObject(T[] array, T object, int from, int to) {
         this.array = array;
         this.object = object;
+        this.from = from;
+        this.to = to;
     }
 
     @Override
     protected Integer compute() {
         int result = 0;
-        if (array.length <= 10) {
-            for (int i = 0; i < array.length; i++) {
+        if ((to - from) <= 10) {
+            for (int i = from; i <= to; i++) {
                 if (array[i].equals(object)) {
                     result = i;
                 }
             }
             return result;
         }
-
-        FindObject<T> firstHalfFinder = new FindObject<>(Arrays.copyOfRange(array, 0,
-                array.length / 2), object);
-        FindObject<T> secondHalfFinder = new FindObject<>(Arrays.copyOfRange(array,
-                array.length / 2, array.length), object);
+        int mid = (from + to) / 2;
+        FindObject<T> firstHalfFinder = new FindObject<>(array, object, from, mid);
+        FindObject<T> secondHalfFinder = new FindObject<>(array, object, mid + 1, to);
         firstHalfFinder.fork();
         secondHalfFinder.fork();
         int r1 = firstHalfFinder.join();
         int r2 = secondHalfFinder.join();
-        System.out.println(Math.max(r1, r2));
         return Math.max(r1, r2);
     }
 
-    public static void main(String[] args) {
+    public static <T> int find(T[] array, T object) {
         ForkJoinPool forkJoinPool = new ForkJoinPool();
-        Model[] array = InitArray.get(100);
-        System.out.println(Arrays.toString(array));
-        FindObject<Model> fo = new FindObject<>(array, new Model(99));
+        FindObject<T> fo = new FindObject<>(array, object, 0, array.length - 1);
+        return forkJoinPool.invoke(fo);
+    }
 
-        System.out.println(forkJoinPool.invoke(fo));
-        //System.out.println(fo.find());
+    public static void main(String[] args) {
+        Model[] array = InitArray.get(100);
+        System.out.println("INDEX IS: " + FindObject.find(array, new Model(90)));
     }
 }
