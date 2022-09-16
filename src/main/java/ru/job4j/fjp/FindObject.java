@@ -44,9 +44,4 @@ public class FindObject<T> extends RecursiveTask<Integer> {
         FindObject<T> fo = new FindObject<>(array, object, 0, array.length - 1);
         return forkJoinPool.invoke(fo);
     }
-
-    public static void main(String[] args) {
-        Model[] array = InitArray.get(100);
-        System.out.println("INDEX IS: " + FindObject.find(array, new Model(110)));
-    }
 }
