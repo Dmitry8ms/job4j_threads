@@ -19,11 +19,12 @@ public class FindObject<T> extends RecursiveTask<Integer> {
 
     @Override
     protected Integer compute() {
-        int result = 0;
+        int result = -1;
         if ((to - from) <= 10) {
             for (int i = from; i <= to; i++) {
                 if (array[i].equals(object)) {
                     result = i;
+                    break;
                 }
             }
             return result;
@@ -46,6 +47,6 @@ public class FindObject<T> extends RecursiveTask<Integer> {
 
     public static void main(String[] args) {
         Model[] array = InitArray.get(100);
-        System.out.println("INDEX IS: " + FindObject.find(array, new Model(90)));
+        System.out.println("INDEX IS: " + FindObject.find(array, new Model(110)));
     }
 }
