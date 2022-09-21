@@ -1,6 +1,9 @@
 package ru.job4j.pools;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.IntStream;
 
 public class RolColSum {
@@ -12,24 +15,48 @@ public class RolColSum {
         for (int i = 0; i < matrix.length; i++) {
             rowSum = IntStream.of(matrix[i]).sum();
             int colSum = 0;
-            for (int j = 0; j < matrix.length; j++) {
-                colSum += matrix[j][i];
+            for (int[] ints : matrix) {
+                colSum += ints[i];
             }
             result[i] = new Sums(rowSum, colSum);
         }
         return result;
     }
 
-    public static Sums[] asyncSum(int[][] matrix) {
-        CompletableFuture<?>[] completableFuture =
-                new CompletableFuture<?>[matrix.length];
-
-        return null;
+    public static Sums[] asyncSum(int[][] matrix) throws ExecutionException, InterruptedException {
+        int size = matrix.length;
+        Sums[] result = new Sums[size];
+        List<CompletableFuture<Sums>> future = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            future.add(getTask(matrix, i));
+        }
+        int index = 0;
+        for (CompletableFuture<Sums> futureElement : future) {
+            result[index++] = futureElement.get();
+        }
+        return result;
     }
 
-    public static void main(String[] args) {
+    private static CompletableFuture<Sums> getTask(int[][] matrix, int i) {
+        return CompletableFuture.supplyAsync(() -> {
+            int size = matrix.length;
+            int rowSum = 0;
+            int colSum = 0;
+            for (int j = 0; j < size; j++) {
+                rowSum += matrix[i][j];
+                colSum += matrix[j][i];
+            }
+            return new Sums(rowSum, colSum);
+        });
+    }
+
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
         int[][] matrix = {{1, 2}, {3, 4}};
         for (Sums element : sum(matrix)) {
+            System.out.println(element);
+        }
+        System.out.println();
+        for (Sums element : asyncSum(matrix)) {
             System.out.println(element);
         }
     }
