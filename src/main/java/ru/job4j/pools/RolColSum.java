@@ -26,12 +26,12 @@ public class RolColSum {
     public static Sums[] asyncSum(int[][] matrix) throws ExecutionException, InterruptedException {
         int size = matrix.length;
         Sums[] result = new Sums[size];
-        List<CompletableFuture<Sums>> future = new ArrayList<>();
+        List<CompletableFuture<Sums>> futureList = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            future.add(getTask(matrix, i));
+            futureList.add(getTask(matrix, i));
         }
         int index = 0;
-        for (CompletableFuture<Sums> futureElement : future) {
+        for (CompletableFuture<Sums> futureElement : futureList) {
             result[index++] = futureElement.get();
         }
         return result;
@@ -50,14 +50,4 @@ public class RolColSum {
         });
     }
 
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
-        int[][] matrix = {{1, 2}, {3, 4}};
-        for (Sums element : sum(matrix)) {
-            System.out.println(element);
-        }
-        System.out.println();
-        for (Sums element : asyncSum(matrix)) {
-            System.out.println(element);
-        }
-    }
 }
