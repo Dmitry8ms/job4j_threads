@@ -1,9 +1,19 @@
 package ru.job4j.concurrent;
 
 public class ThreadState {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Thread first = new Thread(
-                () -> System.out.println("First thread - " + Thread.currentThread().getName())
+                () -> {
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    for (int i = 0; i < 10; i++) {
+                        System.out.println("First thread - " + Thread.currentThread().getName());
+                    }
+
+                }
         );
         Thread second = new Thread(
                 () -> System.out.println("Second thread - " + Thread.currentThread().getName())
