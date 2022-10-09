@@ -2,6 +2,7 @@ package ru.job4j.concurrent;
 
 public class ThreadState {
     public static void main(String[] args) throws InterruptedException {
+        ThreadLocal<String> tl = new ThreadLocal<>();
         Thread first = new Thread(
                 () -> {
                     try {
@@ -9,14 +10,21 @@ public class ThreadState {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    for (int i = 0; i < 10; i++) {
+                    System.out.println(tl.get());
+                    tl.set("ThreadLocal_1");
+                    System.out.println(tl.get());
+                    for (int i = 0; i < 5; i++) {
                         System.out.println("First thread - " + Thread.currentThread().getName());
                     }
 
                 }
         );
         Thread second = new Thread(
-                () -> System.out.println("Second thread - " + Thread.currentThread().getName())
+                () -> {
+                    tl.set("ThreadLocal_2");
+                    System.out.println(tl.get());
+                    System.out.println("Second thread - " + Thread.currentThread().getName());
+                }
         );
         System.out.println("first thread - " + first.getState());
         System.out.println("second thread - " + second.getState());
