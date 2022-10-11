@@ -1,7 +1,6 @@
 package ru.job4j.concurrent;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.*;
 
 public class ThreadState {
     public static void main(String[] args) throws InterruptedException, ExecutionException {
@@ -31,6 +30,7 @@ public class ThreadState {
         );
         FutureTask<Integer> ft = new FutureTask<>(() -> 3);
         Thread third = new Thread(ft);
+        ExecutorService es = Executors.newFixedThreadPool(3);
         System.out.println("first thread - " + first.getState());
         System.out.println("second thread - " + second.getState());
         first.start();
