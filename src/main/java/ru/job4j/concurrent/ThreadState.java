@@ -10,7 +10,7 @@ public class ThreadState {
                 () -> {
                     try {
                         Thread.sleep(1);
-                        semaphore.tryAcquire();
+                        semaphore.acquire();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -29,9 +29,15 @@ public class ThreadState {
                     System.out.println(tl.get());
                     semaphore.drainPermits();
                     System.out.println("available permits:" + semaphore.availablePermits());
-                    semaphore.tryAcquire();
-                    System.out.println("available permits:" + semaphore.availablePermits());
+                    System.out.println(semaphore.tryAcquire());
                     System.out.println("Second thread - " + Thread.currentThread().getName());
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    semaphore.release();
+                    System.out.println("available permits:" + semaphore.availablePermits());
                 }
         );
         FutureTask<Integer> ft = new FutureTask<>(() -> 3);
