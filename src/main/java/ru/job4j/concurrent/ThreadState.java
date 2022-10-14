@@ -5,10 +5,12 @@ import java.util.concurrent.*;
 public class ThreadState {
     public static void main(String[] args) throws InterruptedException, ExecutionException {
         ThreadLocal<String> tl = new ThreadLocal<>();
+        Semaphore semaphore = new Semaphore(2);
         Thread first = new Thread(
                 () -> {
                     try {
                         Thread.sleep(1);
+                        semaphore.tryAcquire();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -25,6 +27,10 @@ public class ThreadState {
                 () -> {
                     tl.set("ThreadLocal_2");
                     System.out.println(tl.get());
+                    semaphore.drainPermits();
+                    System.out.println("available permits:" + semaphore.availablePermits());
+                    semaphore.tryAcquire();
+                    System.out.println("available permits:" + semaphore.availablePermits());
                     System.out.println("Second thread - " + Thread.currentThread().getName());
                 }
         );
