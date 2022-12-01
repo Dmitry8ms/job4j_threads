@@ -32,9 +32,7 @@ public class PoohServer {
         System.out.println(Arrays.toString(parses));
         System.out.println(Arrays.toString(words));
         System.out.println("param: " + param);
-        /*if (!param.contains("=")) {
-            param = "";
-        }*/
+
         System.out.println(httpRequestType + " " + poohMode + " " + sourceName + " "
                 + param);
         try (ServerSocket server = new ServerSocket(9000)) {
