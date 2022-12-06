@@ -25,6 +25,7 @@ public class MyThread implements Runnable {
 
         System.out.println("Поток " + name + " начинает фазу " + phsr.getPhase());
         phsr.arrive();
+
         try {
             Thread.sleep(10);
         } catch (InterruptedException e) {

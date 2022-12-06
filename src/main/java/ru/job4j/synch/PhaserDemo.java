@@ -14,7 +14,6 @@ public class PhaserDemo {
         new MyThread(phsr, "B");
         new MyThread(phsr, "C");
 
-
         phsr.awaitAdvance(0);
         curPhase = phsr.getPhase();
         System.out.println("Фаза " + curPhase + " завершена");
